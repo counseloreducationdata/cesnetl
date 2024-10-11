@@ -20,6 +20,7 @@ from googleapiclient.http import MediaFileUpload
 from url_extractor import extract_urls
 from scraper import get_selenium_response
 import json
+import sys
 
 ##################################### Configure the logging settings #####################################
 
@@ -275,7 +276,7 @@ for attempt in range(ntries):
         # If I already have the previous to latest compilation, end the script
         if previous_to_latest_compilation == last_compilation_collected:
             logger.info("Previous to latest compilation is the same as the last one I collected. Ending the script.")
-            break
+            sys.exit()
         # If I don't have the previous to latest compilation
         else:
             logger.info("Previous to latest compilation is different from the last one I collected. Continuing with the script.")
