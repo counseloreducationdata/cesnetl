@@ -553,43 +553,75 @@ logger.info("Scraping finished.")
 
 # Data for the postings
 
-# Range to write the data
-range_sheet="A"+str(n_compilations+1)+":D10000000"
-logger.info("Prepared range to write the data for the postings")
+# Retry block in case of failure
+for attempt in range(ntries):
 
-# Body of the request
-# The last two elements of each element in data are the source code and the text, which are not written to the Google Sheet
-body={"values": [element[:-2] for element in data_compilation]}
-logger.info("Prepared body of the request for the postings")
+    try:
+        logger.info(f"Re-try block for data for postings (Google Sheets). Attempt {attempt + 1}.")
 
-# Execute the request
-result = service.spreadsheets().values().update(
-    spreadsheetId=spreadsheet_postings_id,
-    range=range_sheet,
-    valueInputOption="USER_ENTERED",
-    body=body
-    ).execute()
-logger.info("Wrote new data to Google Sheets for the postings")
+        # Range to write the data
+        range_sheet="A"+str(n_compilations+1)+":D10000000"
+        logger.info("Prepared range to write the data for the postings")
+
+        # Body of the request
+        # The last two elements of each element in data are the source code and the text, which are not written to the Google Sheet
+        body={"values": [element[:-2] for element in data_compilation]}
+        logger.info("Prepared body of the request for the postings")
+
+        # Execute the request
+        result = service.spreadsheets().values().update(
+            spreadsheetId=spreadsheet_postings_id,
+            range=range_sheet,
+            valueInputOption="USER_ENTERED",
+            body=body
+            ).execute()
+        logger.info("Wrote new data to Google Sheets for the postings")
+    
+    except Exception as e:
+        logger.info(f"Re-try block for data for postings. Attempt {attempt + 1} failed. Error: {e}")
+
+        if attempt < ntries - 1:
+            logger.info("Re-try block for data for postings. Sleeping before retry.")
+            sleep(retry_delay)
+        else:
+            logger.info("Re-try block for data for postings. All retries exhausted.")
+            raise
 
 # Data for the URLs inside the messages
 
-# Range to write the data
-range_sheet="A"+str(n_urls+1)+":F10000000"
-logger.info("Prepared range to write the data for the URLs inside the messages")
+# Retry block in case of failure
+for attempt in range(ntries):
 
-# Body of the request
-# The last two elements of each element in data are the source code and the text, which are not written to the Google Sheet
-body={"values": [element[:-2] for element in data_compilation_urls_inside_messages]}
-logger.info("Prepared body of the request for the URLs inside the messages")
+    try:
+        logger.info(f"Re-try block for data for URLs inside the messages (Google Sheets). Attempt {attempt + 1}.")
 
-# Execute the request
-result = service.spreadsheets().values().update(
-    spreadsheetId=spreadsheet_urls_id,
-    range=range_sheet,
-    valueInputOption="USER_ENTERED",
-    body=body
-    ).execute()
-logger.info("Wrote new data to Google Sheets for the URLs inside the messages")
+        # Range to write the data
+        range_sheet="A"+str(n_urls+1)+":F10000000"
+        logger.info("Prepared range to write the data for the URLs inside the messages")
+
+        # Body of the request
+        # The last two elements of each element in data are the source code and the text, which are not written to the Google Sheet
+        body={"values": [element[:-2] for element in data_compilation_urls_inside_messages]}
+        logger.info("Prepared body of the request for the URLs inside the messages")
+
+        # Execute the request
+        result = service.spreadsheets().values().update(
+            spreadsheetId=spreadsheet_urls_id,
+            range=range_sheet,
+            valueInputOption="USER_ENTERED",
+            body=body
+            ).execute()
+        logger.info("Wrote new data to Google Sheets for the URLs inside the messages")
+    
+    except Exception as e:
+        logger.info(f"Re-try block for data for URLs inside the messages. Attempt {attempt + 1} failed. Error: {e}")
+
+        if attempt < ntries - 1:
+            logger.info("Re-try block for data for URLs inside the messages. Sleeping before retry.")
+            sleep(retry_delay)
+        else:
+            logger.info("Re-try block for data for URLs inside the messages. All retries exhausted.")
+            raise
 
 ####################################### WRITE NEW DATA TO GOOGLE DRIVE #######################################
 
@@ -601,24 +633,40 @@ logger.info("Wrote new data to Google Sheets for the URLs inside the messages")
 # https://drive.google.com/drive/u/4/folders/1qx2CMXHTj0Km3LGaD7K1dB-2jhLBya6y
 folder_id = "1qx2CMXHTj0Km3LGaD7K1dB-2jhLBya6y" 
 
-# Authenticate using the service account (for Google Drive, not Sheets)
-service = build('drive', 'v3', credentials=credentials)
-logger.info("Created service for Google Drive")
-            
-# Iterate over each of the job posts (list)
-for element in data_compilation:
-    logger.info("Iterating over each of the postings")
-    # Get the source code of the job post
-    source_code = element[-2]
-    logger.info("Got the source code of the post")
-    # Get the text of the job post
-    text = element[-1]
-    logger.info("Got the text of the post")
-    # Upload the source code to Google Drive
-    upload_file(element[0], "source_code", source_code, folder_id, service, logger)
-    # Upload the text to Google Drive
-    upload_file(element[0], "text", text, folder_id, service, logger)
-logger.info("Wrote new data for the postings (if available) to Google Drive.")
+# Retry block in case of failure
+for attempt in range(ntries):
+
+    try:
+        logger.info(f"Re-try block for data for the postings (Google Drive). Attempt {attempt + 1}.")
+
+        # Authenticate using the service account (for Google Drive, not Sheets)
+        service = build('drive', 'v3', credentials=credentials)
+        logger.info("Created service for Google Drive")
+                    
+        # Iterate over each of the job posts (list)
+        for element in data_compilation:
+            logger.info("Iterating over each of the postings")
+            # Get the source code of the job post
+            source_code = element[-2]
+            logger.info("Got the source code of the post")
+            # Get the text of the job post
+            text = element[-1]
+            logger.info("Got the text of the post")
+            # Upload the source code to Google Drive
+            upload_file(element[0], "source_code", source_code, folder_id, service, logger)
+            # Upload the text to Google Drive
+            upload_file(element[0], "text", text, folder_id, service, logger)
+        logger.info("Wrote new data for the postings (if available) to Google Drive.")
+
+    except Exception as e:
+        logger.info(f"Re-try block for data for the postings. Attempt {attempt + 1} failed. Error: {e}")
+
+        if attempt < ntries - 1:
+            logger.info("Re-try block for data for the postings. Sleeping before retry.")
+            sleep(retry_delay)
+        else:
+            logger.info("Re-try block for data for the postings. All retries exhausted.")
+            raise
 
 # Data for the URLs inside the messages
 
@@ -626,18 +674,35 @@ logger.info("Wrote new data for the postings (if available) to Google Drive.")
 # https://drive.google.com/drive/u/4/folders/1du_dluC7hiGmk4EuQHCCH8Y0Rw9zxsmg
 folder_id = "1du_dluC7hiGmk4EuQHCCH8Y0Rw9zxsmg"
 
-# Iterate over each of the URLs inside the messages (list)
-for element in data_compilation_urls_inside_messages:
-    logger.info("Iterating over each of the URLs inside the messages")
-    # Get the source code of the URL inside the message
-    source_code = element[-2]
-    logger.info("Got the source code of the URL inside the message")
-    # Get the text of the URL inside the message
-    text = element[-1]
-    logger.info("Got the text of the URL inside the message")
-    # Upload the source code to Google Drive
-    upload_file(element[1], "source_code", source_code, folder_id, service, logger)
-    # Upload the text to Google Drive
-    upload_file(element[1], "text", text, folder_id, service, logger)
+# Retry block in case of failure
+for attempt in range(ntries):
+
+    try:
+        logger.info(f"Re-try block for data for the URLs inside the messages (Google Drive). Attempt {attempt + 1}.")
+
+        # Iterate over each of the URLs inside the messages (list)
+        for element in data_compilation_urls_inside_messages:
+            logger.info("Iterating over each of the URLs inside the messages")
+            # Get the source code of the URL inside the message
+            source_code = element[-2]
+            logger.info("Got the source code of the URL inside the message")
+            # Get the text of the URL inside the message
+            text = element[-1]
+            logger.info("Got the text of the URL inside the message")
+            # Upload the source code to Google Drive
+            upload_file(element[1], "source_code", source_code, folder_id, service, logger)
+            # Upload the text to Google Drive
+            upload_file(element[1], "text", text, folder_id, service, logger)
+        logger.info("Wrote new data for the URLs inside the messages (if available) to Google Drive.")
+
+    except Exception as e:
+        logger.info(f"Re-try block for data for the URLs inside the messages. Attempt {attempt + 1} failed. Error: {e}")
+
+        if attempt < ntries - 1:
+            logger.info("Re-try block for data for the URLs inside the messages. Sleeping before retry.")
+            sleep(retry_delay)
+        else:
+            logger.info("Re-try block for data for the URLs inside the messages. All retries exhausted.")
+            raise
 
 logger.info("Script finished successfully.")
