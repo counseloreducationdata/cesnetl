@@ -576,6 +576,10 @@ for attempt in range(ntries):
             body=body
             ).execute()
         logger.info("Wrote new data to Google Sheets for the postings")
+
+        # Break the loop if successful
+        logger.info("Re-try block for data for postings successful. About to break the loop.")
+        break
     
     except Exception as e:
         logger.info(f"Re-try block for data for postings. Attempt {attempt + 1} failed. Error: {e}")
@@ -612,6 +616,10 @@ for attempt in range(ntries):
             body=body
             ).execute()
         logger.info("Wrote new data to Google Sheets for the URLs inside the messages")
+
+        # Break the loop if successful
+        logger.info("Re-try block for data for URLs inside the messages successful. About to break the loop.")
+        break
     
     except Exception as e:
         logger.info(f"Re-try block for data for URLs inside the messages. Attempt {attempt + 1} failed. Error: {e}")
@@ -658,6 +666,10 @@ for attempt in range(ntries):
             upload_file(element[0], "text", text, folder_id, service, logger)
         logger.info("Wrote new data for the postings (if available) to Google Drive.")
 
+        # Break the loop if successful
+        logger.info("Re-try block for data for the postings successful. About to break the loop.")
+        break
+
     except Exception as e:
         logger.info(f"Re-try block for data for the postings. Attempt {attempt + 1} failed. Error: {e}")
 
@@ -694,6 +706,10 @@ for attempt in range(ntries):
             # Upload the text to Google Drive
             upload_file(element[1], "text", text, folder_id, service, logger)
         logger.info("Wrote new data for the URLs inside the messages (if available) to Google Drive.")
+
+        # Break the loop if successful
+        logger.info("Re-try block for data for the URLs inside the messages successful. About to break the loop.")
+        break
 
     except Exception as e:
         logger.info(f"Re-try block for data for the URLs inside the messages. Attempt {attempt + 1} failed. Error: {e}")
