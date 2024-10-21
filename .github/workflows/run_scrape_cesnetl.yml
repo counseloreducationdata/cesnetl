@@ -2,7 +2,7 @@ name: Run Scraping CESNET-L Script
 
 on:
   schedule:
-    - cron: '0 22 * * 2' # Every Tuesday at 10pm
+    - cron: '0 22 * * 7' # Every Sunday at 10pm
   workflow_dispatch:
 
 jobs:
