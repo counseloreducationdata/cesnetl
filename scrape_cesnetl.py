@@ -13,12 +13,12 @@ import os
 from dotenv import load_dotenv
 import logging
 from datetime import datetime
-from text_extractor import extract_text
+from shared_scripts.text_extractor import extract_text
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 from googleapiclient.http import MediaFileUpload
-from url_extractor import extract_urls
-from scraper import get_selenium_response
+from shared_scripts.url_extractor import extract_urls
+from shared_scripts.scraper import get_selenium_response
 import json
 import sys
 
