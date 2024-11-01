@@ -30,6 +30,7 @@ jobs:
         echo "scraper.py" >> .git/info/sparse-checkout
         echo "text_extractor.py" >> .git/info/sparse-checkout
         echo "url_extractor.py" >> .git/info/sparse-checkout
+        echo "salary_functions.py" >> .git/info/sparse-checkout
 
         # Pull only the specified files from the main branch
         git pull origin main
