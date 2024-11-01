@@ -21,6 +21,7 @@ from shared_scripts.url_extractor import extract_urls
 from shared_scripts.scraper import get_selenium_response
 import json
 import sys
+from shared_scripts.salary_functions import check_salary
 
 ##################################### Configure the logging settings #####################################
 
@@ -402,14 +403,22 @@ for url in urls:
                 source_code_message = driver.page_source
                 logger.info("Source code for the message obtained.")
 
-                # Store the source code for the message
-                data_posting.append(source_code_message)
-                logger.info("Source code for the message stored.")
-
                 # Extract the text from the source code of the message
                 text = extract_text(source_code_message)
                 logger.info("Text for the message extracted.")
 
+                # Check if there seems to be salary info
+                salary_flag = check_salary(text)
+                logger.info(f"salary_flag: {salary_flag}.")
+    
+                # Store salary flag
+                data_posting.append(salary_flag)
+                logger.info("Salary flag appended to the list.")
+
+                # Store the source code for the message
+                data_posting.append(source_code_message)
+                logger.info("Source code for the message stored.")
+                
                 # Store the text for the message
                 data_posting.append(text)
                 logger.info("Text for the message stored.")
@@ -439,14 +448,22 @@ for url in urls:
                 source_code_message = driver.page_source
                 logger.info("Source code for the message obtained.")
 
-                # Store the source code for the message
-                data_posting.append(source_code_message)
-                logger.info("Source code for the message stored.")
-
                 # Extract the text from the source code of the message
                 text = extract_text(source_code_message)
                 logger.info("Text for the message extracted.")
 
+                # Check if there seems to be salary info
+                salary_flag = check_salary(text)
+                logger.info(f"salary_flag: {salary_flag}.")
+    
+                # Store salary flag
+                data_posting.append(salary_flag)
+                logger.info("Salary flag appended to the list.")
+                
+                # Store the source code for the message
+                data_posting.append(source_code_message)
+                logger.info("Source code for the message stored.")
+                
                 # Store the text for the message
                 data_posting.append(text)
                 logger.info("Text for the message stored.")
@@ -464,6 +481,9 @@ for url in urls:
             else:
                 logger.info("Second re-try block. All retries exhausted.")
 
+                # Store 'FAILURE' for the salary flag
+                data_posting.append('FAILURE')
+                
                 # Store 'FAILURE' for the source code for the message
                 data_posting.append('FAILURE')
 
@@ -532,14 +552,22 @@ for data_posting in data_compilation:
         source_code_url_in_message = get_selenium_response(url_in_message)
         logger.info(f"Source code for the URL in the message obtained.")
 
-        # Store the source code for the URL in the message
-        data_url_in_message.append(source_code_url_in_message)
-        logger.info(f"Source code for the URL in the message stored.")
-
         # Extract the text from the response
         text_in_url_in_message = extract_text(source_code_url_in_message)
         logger.info(f"Text extracted from the URL in the message.")
 
+        # Check if there seems to be salary info
+        salary_flag = check_salary(text_in_url_in_message)
+        logger.info(f"salary_flag: {salary_flag}.")
+
+        # Store salary flag
+        data_url_in_message.append(salary_flag)
+        logger.info("Salary flag appended to the list.")
+        
+        # Store the source code for the URL in the message
+        data_url_in_message.append(source_code_url_in_message)
+        logger.info(f"Source code for the URL in the message stored.")
+        
         # Store the text for the URL in the message
         data_url_in_message.append(text_in_url_in_message)
         logger.info(f"Text for the URL in the message stored.")
@@ -561,7 +589,7 @@ for attempt in range(ntries):
         logger.info(f"Re-try block for data for postings (Google Sheets). Attempt {attempt + 1}.")
 
         # Range to write the data
-        range_sheet="A"+str(n_compilations+1)+":D10000000"
+        range_sheet="A"+str(n_compilations+1)+":E10000000"
         logger.info("Prepared range to write the data for the postings")
 
         # Body of the request
@@ -601,7 +629,7 @@ for attempt in range(ntries):
         logger.info(f"Re-try block for data for URLs inside the messages (Google Sheets). Attempt {attempt + 1}.")
 
         # Range to write the data
-        range_sheet="A"+str(n_urls+1)+":F10000000"
+        range_sheet="A"+str(n_urls+1)+":G10000000"
         logger.info("Prepared range to write the data for the URLs inside the messages")
 
         # Body of the request
