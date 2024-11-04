@@ -305,56 +305,6 @@ for attempt in range(ntries):
             missing_compilations_data = []
             logger.info("List to store info about the compilation(s) that I'm missing initialized.")
 
-            # If I'm missing the previous to latest compilation
-            if previous_to_latest_compilation != last_compilation_collected:
-                logger.info(f"{previous_to_latest_compilation} (previous_to_latest_compilation) != {last_compilation_collected} (last_compilation_collected).")
-
-                # Create list to store the data for the weekly compilation
-                missing_compilation = []
-
-                # Go to the previous to latest compilation
-                driver.get(previous_to_latest_compilation_url)
-                sleep(sleep_time)
-                logger.info(f"Web driver went to the previous to latest compilation.")
-
-                # Check if login is required
-                if check_login_required(driver.page_source):
-                    logger.info("Login required. Logging in.")
-                    # Log in to the website
-                    login_cesnet(driver, password)
-                    sleep(sleep_time)
-
-                # Get the source code for the compilation
-                source_code = driver.page_source
-                logger.info("Source code for the compilation obtained.")
-
-                # Parse the source code for the compilation
-                soup_compilation = BeautifulSoup(source_code, 'html.parser')
-                logger.info("Source code for the compilation parsed.")
-
-                # Get the week of the compilation (the second h2 element)
-                week = soup_compilation.find_all('h2')[1].text.strip()  # e.g., August 2024, Week 3
-                logger.info(f"Week of the compilation obtained: {week}.")
-
-                # Append the week of the compilation to the list
-                missing_compilation.append(week)
-                logger.info("Week of the compilation appended to the list.")
-
-                # Find the URLs for the postings
-                urls = [a['href'] for a in soup_compilation.find_all('a', href=True, string=contains_posting) if 'https' in a['href']]
-                logger.info("URLs for the postings obtained.")
-
-                # Append the URLs for the postings to the list
-                missing_compilation.append(urls)
-                logger.info("URLs for the postings appended to the list.")
-
-                # Append the data for the weekly compilation to the list
-                missing_compilations_data.append(missing_compilation)
-                logger.info("Data for the weekly compilation appended to the list.")
-            else:
-                logger.info("I'm not missing the previous to latest compilation.")
-
-            # There's a fair amount of repetition here, but it's only twice, so that's ok
             # If I'm missing the previous to previous to latest compilation
             if previous_to_previous_to_latest_compilation != last_compilation_collected:
                 logger.info(f"{previous_to_previous_to_latest_compilation} (previous_to_previous_to_latest_compilation) != {last_compilation_collected} (last_compilation_collected).")
@@ -403,6 +353,56 @@ for attempt in range(ntries):
                 logger.info("Data for the weekly compilation appended to the list.")
             else:
                 logger.info("I'm not missing the previous to previous to latest compilation.")
+
+            # There's a fair amount of repetition here, but it's only twice, so that's ok
+            # If I'm missing the previous to latest compilation
+            if previous_to_latest_compilation != last_compilation_collected:
+                logger.info(f"{previous_to_latest_compilation} (previous_to_latest_compilation) != {last_compilation_collected} (last_compilation_collected).")
+
+                # Create list to store the data for the weekly compilation
+                missing_compilation = []
+
+                # Go to the previous to latest compilation
+                driver.get(previous_to_latest_compilation_url)
+                sleep(sleep_time)
+                logger.info(f"Web driver went to the previous to latest compilation.")
+
+                # Check if login is required
+                if check_login_required(driver.page_source):
+                    logger.info("Login required. Logging in.")
+                    # Log in to the website
+                    login_cesnet(driver, password)
+                    sleep(sleep_time)
+
+                # Get the source code for the compilation
+                source_code = driver.page_source
+                logger.info("Source code for the compilation obtained.")
+
+                # Parse the source code for the compilation
+                soup_compilation = BeautifulSoup(source_code, 'html.parser')
+                logger.info("Source code for the compilation parsed.")
+
+                # Get the week of the compilation (the second h2 element)
+                week = soup_compilation.find_all('h2')[1].text.strip()  # e.g., August 2024, Week 3
+                logger.info(f"Week of the compilation obtained: {week}.")
+
+                # Append the week of the compilation to the list
+                missing_compilation.append(week)
+                logger.info("Week of the compilation appended to the list.")
+
+                # Find the URLs for the postings
+                urls = [a['href'] for a in soup_compilation.find_all('a', href=True, string=contains_posting) if 'https' in a['href']]
+                logger.info("URLs for the postings obtained.")
+
+                # Append the URLs for the postings to the list
+                missing_compilation.append(urls)
+                logger.info("URLs for the postings appended to the list.")
+
+                # Append the data for the weekly compilation to the list
+                missing_compilations_data.append(missing_compilation)
+                logger.info("Data for the weekly compilation appended to the list.")
+            else:
+                logger.info("I'm not missing the previous to latest compilation.")
 
             # Break the loop if successful
             logger.info("First re-try block successful. About to break the loop.")
