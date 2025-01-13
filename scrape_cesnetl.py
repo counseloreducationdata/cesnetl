@@ -611,7 +611,7 @@ for missing_compilation in missing_compilations_data:
         # Add data for two purposes:
         # 1. To add the specific week to the spreadsheet, so that it's in the record
         # 2. So that the script keeps running if a week there are no postings (e.g., December 2024, Week 5), but the next week there are
-        data_compilation.append([n_compilations + len(data_compilation) + 1, week, url, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), None, None, None]) # None instead of salary flag, source code, and text
+        data_compilation.append([n_compilations + len(data_compilation) + 1, week, None, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), None, None, None]) # None instead of salary flag, source code, and text
         
 # Quit the driver
 driver.quit()
