@@ -433,175 +433,186 @@ for missing_compilation in missing_compilations_data:
 
     # Define variable with the URLs for the postings
     urls = missing_compilation[1]
-    logger.info(f"URLs for the postings obtained. First URL: {urls[0]}.")
+    logger.info(f"URLs for the postings obtained. len(urls): {len(urls)}.")
 
-    # Iterate over the URLs for the postings
-    for url in urls:
-        logger.info(f"Starting loop for the URLs for the postings. URL: {url}.")
-
-        # Create list to store the data for the posting
-        data_posting = []
-
-        # Store the ID for the posting
-        data_posting.append(n_compilations + len(data_compilation) + 1)
-
-        # Store the week of the compilation
-        data_posting.append(week)
-
-        # Store the URL for the posting
-        data_posting.append(url)
-
-        # Store the current timestamp
-        data_posting.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-
-        logger.info("Data for the posting initialized.")
-
-        # Retry block in case of failure
-        for attempt in range(ntries):
-            logger.info(f"Second re-try block. Attempt {attempt + 1}.")
-
-            try:
-                # Go to the URL of the posting
-                driver.get(url)
-                logger.info("Web driver went to the URL of the posting.")
-                sleep(sleep_time)
-
-                # Check if login is required
-                if check_login_required(driver.page_source):
-                    logger.info("Login required. Logging in.")
-                    # Log in to the website
-                    login_cesnet(driver, password)
-                    sleep(sleep_time)
-
-                # Get the source code for the posting
-                source_code_posting = driver.page_source
-                logger.info("Source code for the posting obtained.")
-
-                # Parse the source code for the posting
-                soup_posting = BeautifulSoup(source_code_posting, 'html.parser')
-                logger.info("Source code for the posting parsed.")
-
-                # Try getting the plain text data
+    # Check that there are actually URLs
+    if len(urls) > 0:
+        logger.info(f"Checked if if len(urls) > 0. First URL: {urls[0]}.")
+    
+        # Iterate over the URLs for the postings
+        for url in urls:
+            logger.info(f"Starting loop for the URLs for the postings. URL: {url}.")
+    
+            # Create list to store the data for the posting
+            data_posting = []
+    
+            # Store the ID for the posting
+            data_posting.append(n_compilations + len(data_compilation) + 1)
+    
+            # Store the week of the compilation
+            data_posting.append(week)
+    
+            # Store the URL for the posting
+            data_posting.append(url)
+    
+            # Store the current timestamp
+            data_posting.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    
+            logger.info("Data for the posting initialized.")
+    
+            # Retry block in case of failure
+            for attempt in range(ntries):
+                logger.info(f"Second re-try block. Attempt {attempt + 1}.")
+    
                 try:
-                    logger.info("Trying to find the plain text message.")
-
-                    # Find the URL of the plain text message
-                    url_message = url_base + soup_posting.find('a', href = True, string = contains_plain_text)['href']
-                    logger.info(f"URL for the plain text message obtained: {url_message}.")
-
-                    # Go to the message URL
-                    driver.get(url_message)
-                    logger.info("Web driver went to the message URL.")
+                    # Go to the URL of the posting
+                    driver.get(url)
+                    logger.info("Web driver went to the URL of the posting.")
                     sleep(sleep_time)
-
+    
                     # Check if login is required
                     if check_login_required(driver.page_source):
                         logger.info("Login required. Logging in.")
                         # Log in to the website
                         login_cesnet(driver, password)
                         sleep(sleep_time)
-
-                    # Get the source code for the message
-                    source_code_message = driver.page_source
-                    logger.info("Source code for the message obtained.")
-
-                    # Extract the text from the source code of the message
-                    text = extract_text(source_code_message)
-                    logger.info("Text for the message extracted.")
-
-                    # Check if there seems to be salary info
-                    salary_flag = check_salary(text)
-                    logger.info(f"salary_flag: {salary_flag}.")
-        
-                    # Store salary flag
-                    data_posting.append(salary_flag)
-                    logger.info("Salary flag appended to the list.")
-
-                    # Store the source code for the message
-                    data_posting.append(source_code_message)
-                    logger.info("Source code for the message stored.")
-                    
-                    # Store the text for the message
-                    data_posting.append(text)
-                    logger.info("Text for the message stored.")
-
-                except:
-                    logger.info("Something went wrong with finding the plain text message. Trying with the HTML message.")
-
-                    # Get the HTML data (if there's no plain text, there's HTML)
-                    # Pretty much the same as for the plain text. Not creating a function since it's only two. Maybe I should though...
-                    # Find the URL of the HTML message
-                    url_message = url_base + soup_posting.find('a', href = True, string = contains_html)['href']
-                    logger.info(f"URL for the HTML message obtained: {url_message}.")
-
-                    # Go to the message URL
-                    driver.get(url_message)
-                    logger.info("Web driver went to the message URL.")
-                    sleep(sleep_time)
-
-                    # Check if login is required
-                    if check_login_required(driver.page_source):
-                        logger.info("Login required. Logging in.")
-                        # Log in to the website
-                        login_cesnet(driver, password)
+    
+                    # Get the source code for the posting
+                    source_code_posting = driver.page_source
+                    logger.info("Source code for the posting obtained.")
+    
+                    # Parse the source code for the posting
+                    soup_posting = BeautifulSoup(source_code_posting, 'html.parser')
+                    logger.info("Source code for the posting parsed.")
+    
+                    # Try getting the plain text data
+                    try:
+                        logger.info("Trying to find the plain text message.")
+    
+                        # Find the URL of the plain text message
+                        url_message = url_base + soup_posting.find('a', href = True, string = contains_plain_text)['href']
+                        logger.info(f"URL for the plain text message obtained: {url_message}.")
+    
+                        # Go to the message URL
+                        driver.get(url_message)
+                        logger.info("Web driver went to the message URL.")
                         sleep(sleep_time)
+    
+                        # Check if login is required
+                        if check_login_required(driver.page_source):
+                            logger.info("Login required. Logging in.")
+                            # Log in to the website
+                            login_cesnet(driver, password)
+                            sleep(sleep_time)
+    
+                        # Get the source code for the message
+                        source_code_message = driver.page_source
+                        logger.info("Source code for the message obtained.")
+    
+                        # Extract the text from the source code of the message
+                        text = extract_text(source_code_message)
+                        logger.info("Text for the message extracted.")
+    
+                        # Check if there seems to be salary info
+                        salary_flag = check_salary(text)
+                        logger.info(f"salary_flag: {salary_flag}.")
+            
+                        # Store salary flag
+                        data_posting.append(salary_flag)
+                        logger.info("Salary flag appended to the list.")
+    
+                        # Store the source code for the message
+                        data_posting.append(source_code_message)
+                        logger.info("Source code for the message stored.")
+                        
+                        # Store the text for the message
+                        data_posting.append(text)
+                        logger.info("Text for the message stored.")
+    
+                    except:
+                        logger.info("Something went wrong with finding the plain text message. Trying with the HTML message.")
+    
+                        # Get the HTML data (if there's no plain text, there's HTML)
+                        # Pretty much the same as for the plain text. Not creating a function since it's only two. Maybe I should though...
+                        # Find the URL of the HTML message
+                        url_message = url_base + soup_posting.find('a', href = True, string = contains_html)['href']
+                        logger.info(f"URL for the HTML message obtained: {url_message}.")
+    
+                        # Go to the message URL
+                        driver.get(url_message)
+                        logger.info("Web driver went to the message URL.")
+                        sleep(sleep_time)
+    
+                        # Check if login is required
+                        if check_login_required(driver.page_source):
+                            logger.info("Login required. Logging in.")
+                            # Log in to the website
+                            login_cesnet(driver, password)
+                            sleep(sleep_time)
+    
+                        # Get the source code for the message
+                        source_code_message = driver.page_source
+                        logger.info("Source code for the message obtained.")
+    
+                        # Extract the text from the source code of the message
+                        text = extract_text(source_code_message)
+                        logger.info("Text for the message extracted.")
+    
+                        # Check if there seems to be salary info
+                        salary_flag = check_salary(text)
+                        logger.info(f"salary_flag: {salary_flag}.")
+            
+                        # Store salary flag
+                        data_posting.append(salary_flag)
+                        logger.info("Salary flag appended to the list.")
+                        
+                        # Store the source code for the message
+                        data_posting.append(source_code_message)
+                        logger.info("Source code for the message stored.")
+                        
+                        # Store the text for the message
+                        data_posting.append(text)
+                        logger.info("Text for the message stored.")
+    
+                    # Break the loop if successful
+                    logger.info("Second re-try block successful. About to break the loop.")
+                    break
+    
+                except Exception as e:
+                    logger.info(f"Second re-try block. Attempt {attempt + 1} failed. Error: {e}")
+    
+                    if attempt < ntries - 1:  # Check if we have retries left
+                        logger.info("Second re-try block. Sleeping before retry.")
+                        sleep(retry_delay)
+                    else:
+                        logger.info("Second re-try block. All retries exhausted.")
+    
+                        # Store 'FAILURE' for the salary flag
+                        data_posting.append('FAILURE')
+                        
+                        # Store 'FAILURE' for the source code for the message
+                        data_posting.append('FAILURE')
+    
+                        # Store 'FAILURE' for the text for the message
+                        data_posting.append('FAILURE')
+    
+                        logger.info("Data for the posting stored as 'FAILURE'.")
+    
+                        # Append the data for the posting to the data for the compilation
+                        data_compilation.append(data_posting)
+                        logger.info("Data for the posting appended to the data for the compilation after failure.")
+    
+            # Append the data for the posting to the data for the compilation
+            data_compilation.append(data_posting)
+            logger.info("Data for the posting appended to the data for the compilation after success.")
 
-                    # Get the source code for the message
-                    source_code_message = driver.page_source
-                    logger.info("Source code for the message obtained.")
-
-                    # Extract the text from the source code of the message
-                    text = extract_text(source_code_message)
-                    logger.info("Text for the message extracted.")
-
-                    # Check if there seems to be salary info
-                    salary_flag = check_salary(text)
-                    logger.info(f"salary_flag: {salary_flag}.")
+    # If there are no URLs
+    else:
+        # Add data for two purposes:
+        # 1. To add the specific week to the spreadsheet, so that it's in the record
+        # 2. So that the script keeps running if a week there are no postings (e.g., December 2024, Week 5), but the next week there are
+        data_compilation.append([n_compilations + len(data_compilation) + 1, week, url, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), None, None, None]) # None instead of salary flag, source code, and text
         
-                    # Store salary flag
-                    data_posting.append(salary_flag)
-                    logger.info("Salary flag appended to the list.")
-                    
-                    # Store the source code for the message
-                    data_posting.append(source_code_message)
-                    logger.info("Source code for the message stored.")
-                    
-                    # Store the text for the message
-                    data_posting.append(text)
-                    logger.info("Text for the message stored.")
-
-                # Break the loop if successful
-                logger.info("Second re-try block successful. About to break the loop.")
-                break
-
-            except Exception as e:
-                logger.info(f"Second re-try block. Attempt {attempt + 1} failed. Error: {e}")
-
-                if attempt < ntries - 1:  # Check if we have retries left
-                    logger.info("Second re-try block. Sleeping before retry.")
-                    sleep(retry_delay)
-                else:
-                    logger.info("Second re-try block. All retries exhausted.")
-
-                    # Store 'FAILURE' for the salary flag
-                    data_posting.append('FAILURE')
-                    
-                    # Store 'FAILURE' for the source code for the message
-                    data_posting.append('FAILURE')
-
-                    # Store 'FAILURE' for the text for the message
-                    data_posting.append('FAILURE')
-
-                    logger.info("Data for the posting stored as 'FAILURE'.")
-
-                    # Append the data for the posting to the data for the compilation
-                    data_compilation.append(data_posting)
-                    logger.info("Data for the posting appended to the data for the compilation after failure.")
-
-        # Append the data for the posting to the data for the compilation
-        data_compilation.append(data_posting)
-        logger.info("Data for the posting appended to the data for the compilation after success.")
-
 # Quit the driver
 driver.quit()
 logger.info("Web driver quit.")
