@@ -251,11 +251,11 @@ for attempt in range(ntries):
         # Log in to the website
         # Not using the function to login because here it requires username in addition to password
         # Find username input field and insert username
-        driver.find_element("id", "Email Address").send_keys(username)
+        driver.find_element("id", "email").send_keys(username)
         logger.info("Inside login_cesnet: username inserted.")
 
         # Find password input field and insert password
-        driver.find_element("id", "Password").send_keys(password)
+        driver.find_element("id", "pw").send_keys(password)
         logger.info("Inside login_cesnet: password inserted.")
 
         # Click log in button
