@@ -332,8 +332,8 @@ for attempt in range(ntries):
                 soup_compilation = BeautifulSoup(source_code, 'html.parser')
                 logger.info("Source code for the compilation parsed.")
 
-                # Get the week of the compilation (the second h2 element)
-                week = soup_compilation.find_all('h2')[1].text.strip()
+                # Get the week of the compilation
+                week = soup_compilation.find_all('h5')[0].text.strip()
                 logger.info(f"Week of the compilation obtained: {week}.")
 
                 # Append the week of the compilation to the list
@@ -341,7 +341,7 @@ for attempt in range(ntries):
                 logger.info("Week of the compilation appended to the list.")
 
                 # Find the URLs for the postings
-                urls = [a['href'] for a in soup_compilation.find_all('a', href=True, string=contains_posting) if 'https' in a['href']]
+                urls = ["https://listserv.kent.edu/" + a['href'] for a in soup_compilation.find_all('a', href=True, string=contains_posting) if 'cgi-bin/wa.exe?A2=CESNET-L;' in a['href']]
                 logger.info("URLs for the postings obtained.")
 
                 # Append the URLs for the postings to the list
@@ -382,8 +382,8 @@ for attempt in range(ntries):
                 soup_compilation = BeautifulSoup(source_code, 'html.parser')
                 logger.info("Source code for the compilation parsed.")
 
-                # Get the week of the compilation (the second h2 element)
-                week = soup_compilation.find_all('h2')[1].text.strip()  # e.g., August 2024, Week 3
+                # Get the week of the compilation
+                week = soup_compilation.find_all('h5')[0].text.strip()  # e.g., August 2024, Week 3
                 logger.info(f"Week of the compilation obtained: {week}.")
 
                 # Append the week of the compilation to the list
@@ -391,7 +391,7 @@ for attempt in range(ntries):
                 logger.info("Week of the compilation appended to the list.")
 
                 # Find the URLs for the postings
-                urls = [a['href'] for a in soup_compilation.find_all('a', href=True, string=contains_posting) if 'https' in a['href']]
+                urls = ["https://listserv.kent.edu/" + a['href'] for a in soup_compilation.find_all('a', href=True, string=contains_posting) if 'cgi-bin/wa.exe?A2=CESNET-L;' in a['href']]
                 logger.info("URLs for the postings obtained.")
 
                 # Append the URLs for the postings to the list
